@@ -3,6 +3,9 @@ name: FinanceHub APK
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -11,13 +14,11 @@ jobs:
       - name: Repository laden
         uses: actions/checkout@v4
 
-      - name: Java einrichten
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Android-Projekt erstellen
+      - name: Android-Projekt laden
         run: |
-          git clone https://github.com/xchacha20-poly1305/webview-apk-template.git android-template
-          ls -la android-template
+          git clone --branch dev --depth 1 https://github.com/xchacha20-poly1305/webview-apk-template.git android-template
+
+      - name: Vorlage und Konfiguration prüfen
+        run: |
+          find android-template -maxdepth 4 -type f | sort
+          cat android-template/README.md
