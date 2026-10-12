@@ -1,4 +1,4 @@
-
+```yaml
 name: FinanceHub APK
 
 on:
@@ -7,18 +7,48 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Repository laden
         uses: actions/checkout@v4
 
-      - name: Android-Projekt laden
-        run: |
-          git clone --branch dev --depth 1 https://github.com/xchacha20-poly1305/webview-apk-template.git android-template
+      - name: Java einrichten
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
-      - name: Vorlage und Konfiguration prüfen
+      - name: Android-Vorlage laden
         run: |
-          find android-template -maxdepth 4 -type f | sort
-          cat android-template/README.md
+          git clone --branch dev --depth 1 \
+            https://github.com/xchacha20-poly1305/webview-apk-template.git android-template
+
+      - name: FinanceHub konfigurieren
+        working-directory: android-template
+        run: |
+          cat > app.properties <<'EOF'
+          app.url=https://sebastian44motes-netizen.github.io/Finanapp/
+          app.package=com.sebastian44motes.financehub
+          app.name=FinanceHub
+          app.icon_url=
+          EOF
+
+      - name: APK bauen
+        working-directory: android-template
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: APK als Download bereitstellen
+        uses: actions/upload-artifact@v4
+        with:
+          name: FinanceHub-APK
+          path: android-template/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+```
