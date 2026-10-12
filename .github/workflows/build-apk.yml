@@ -1,5 +1,5 @@
 ```yaml
-name: FinanceHub APK
+name: "FinanceHub APK"
 
 on:
   workflow_dispatch:
@@ -13,7 +13,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Repository laden
         uses: actions/checkout@v4
@@ -22,12 +21,10 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
 
       - name: Android-Vorlage laden
-        run: |
-          git clone --branch dev --depth 1 \
-            https://github.com/xchacha20-poly1305/webview-apk-template.git android-template
+        run: git clone --depth 1 --branch dev https://github.com/xchacha20-poly1305/webview-apk-template.git android-template
 
       - name: FinanceHub konfigurieren
         working-directory: android-template
@@ -45,10 +42,10 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
-      - name: APK als Download bereitstellen
+      - name: APK bereitstellen
         uses: actions/upload-artifact@v4
         with:
-          name: FinanceHub-APK
+          name: Finanzapp-APK
           path: android-template/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
 ```
